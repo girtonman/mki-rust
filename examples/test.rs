@@ -5,10 +5,10 @@ use std::time::Duration;
 
 fn main() {
     use Keyboard::*;
-    bind_any_key(Action::handle_kb(|key| {
+    bind_any_key(Action::handle_kb(|key, _| {
         println!("Pressed: {:?}", key);
     }));
-    A.bind(|_| {
+    A.bind(|_, _| {
         println!("AAAAAAnd we have a winner.");
     });
 
@@ -19,25 +19,25 @@ fn main() {
         thread::sleep(Duration::from_millis(100));
     }));
 
-    R.bind(|_| {
+    R.bind(|_, _| {
         println!("R Pressed sending Q");
         Q.click();
     });
 
-    Mouse::Left.bind(|_| {
+    Mouse::Left.bind(|_, _| {
         println!("Left Mouse button pressed");
     });
 
     #[cfg(target_os = "windows")] // Not sure how to detect double on linux
-    Mouse::DoubleLeft.bind(|_| {
+    Mouse::DoubleLeft.bind(|_, _| {
         println!("Double Left Click Mouse");
     });
 
-    Mouse::Right.bind(|_| {
+    Mouse::Right.bind(|_, _| {
         println!("Right Mouse button pressed");
     });
 
-    O.bind(|_| loop {
+    O.bind(|_, _| loop {
         println!("Observing T: {}", T.is_pressed());
         thread::sleep(Duration::from_secs(1));
     });
@@ -56,7 +56,7 @@ fn main() {
         COUNTER.fetch_add(1, Ordering::Relaxed);
     });
 
-    B.bind(|_| {
+    B.bind(|_, _| {
         // Clearing bind for nicer output.
         remove_any_key_bind();
         R.clear_bind();

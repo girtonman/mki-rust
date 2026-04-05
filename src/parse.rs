@@ -247,7 +247,7 @@ pub fn load_config(content: &str) -> Result<(), serde_yaml::Error> {
                     );
                 }
                 let button = buttons[0];
-                button.bind(move |_mouse_why_is_this_here| {
+                button.bind(move |_mouse_why_is_this_here, _| {
                     handle_action(&action);
                 })
             }

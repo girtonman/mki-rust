@@ -3,11 +3,11 @@ use std::thread;
 use std::time::Duration;
 
 fn main() {
-    Keyboard::A.bind(|_| {
+    Keyboard::A.bind(|_, _| {
         println!("A pressed, sending B");
         Keyboard::B.click();
     });
-    mki::bind_any_key(Action::handle_kb(|key| {
+    mki::bind_any_key(Action::handle_kb(|key, _| {
         use Keyboard::*;
         if matches!(key, S | L | O | W | LeftShift | LeftControl | B) {
             // Ignore outputs from other commands for nicer output
@@ -15,7 +15,7 @@ fn main() {
             println!("Some key pressed pressed: {:?}", key);
         }
     }));
-    mki::bind_any_button(Action::handle_mouse(|button| {
+    mki::bind_any_button(Action::handle_mouse(|button, _| {
         println!("Mouse button pressed {:?}", button);
     }));
     mki::register_hotkey(&[Keyboard::LeftControl, Keyboard::B], || {

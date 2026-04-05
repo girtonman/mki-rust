@@ -60,7 +60,7 @@ impl Keyboard {
     }
 
     /// Bind an action on this KeyboardKey, action will be invoked on a new thread.
-    pub fn bind(&self, handler: impl Fn(Keyboard) + Send + Sync + 'static) {
+    pub fn bind(&self, handler: impl Fn(Keyboard, State) + Send + Sync + 'static) {
         bind_key(*self, Action::handle_kb(handler))
     }
 
@@ -115,7 +115,7 @@ impl Mouse {
     }
 
     /// Bind an action on this MouseButton, action will be invoked on a new thread.
-    pub fn bind(&self, handler: impl Fn(Mouse) + Send + Sync + 'static) {
+    pub fn bind(&self, handler: impl Fn(Mouse, State) + Send + Sync + 'static) {
         bind_button(*self, Action::handle_mouse(handler))
     }
 
@@ -200,21 +200,31 @@ impl Action {
     /// Use this if you want to send inputs from the handlers as on windows it is not allowed
     /// to pump new events.
     /// will not inhibit event.
-    pub fn handle_kb(action: impl Fn(Keyboard) + Send + Sync + 'static) -> Self {
-        Self::handle(move |event| {
-            if let Event::Keyboard(key) = event {
-                action(key);
-            }
-        })
+    pub fn handle_kb(action: impl Fn(Keyboard, State) + Send + Sync + 'static) -> Self {
+		Action {
+            callback: Box::new(move |event, state| {
+				if let Event::Keyboard(key) = event {
+					action(key, state);
+				}
+            }),
+            inhibit: InhibitEvent::No,
+            defer: true,
+            sequencer: false,
+        }
     }
 
     /// Version of `handle_kb` but for mouse.
-    pub fn handle_mouse(action: impl Fn(Mouse) + Send + Sync + 'static) -> Self {
-        Self::handle(move |event| {
-            if let Event::Mouse(button) = event {
-                action(button);
-            }
-        })
+    pub fn handle_mouse(action: impl Fn(Mouse, State) + Send + Sync + 'static) -> Self {
+		Action {
+            callback: Box::new(move |event, state| {
+				if let Event::Mouse(button) = event {
+					action(button, state);
+				}
+            }),
+            inhibit: InhibitEvent::No,
+            defer: true,
+            sequencer: false,
+        }
     }
 
     /// General version of `handle_kb` for both Mouse and Keyboard.
