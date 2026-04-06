@@ -222,6 +222,7 @@ pub fn key_to_event(key: Keyboard) -> Option<Key> {
         BackwardSlash => Some(Key::BackSlash),
         RightBrace => Some(Key::RightBrace),
         Grave => Some(Key::Grave),
+		ThatThing => None,
     }
 }
 
